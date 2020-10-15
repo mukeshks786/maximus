@@ -1,4 +1,6 @@
 <?php
+
+//hello mukesh sain
 $link = mysql_connect('localhost', 'root', '123456','task');
 if (!$link) {
   die('Could not connect: ' . mysql_error());
