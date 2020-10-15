@@ -1,0 +1,36 @@
+
+--Access Token(Complete)
+
+Method: POST
+EndPoint:http://fueleye.com/api/get_access_token
+
+Parameter:
+	  POST:	
+	  user_name=dummy
+	  password=******
+
+Suceess Response:
+		{
+		    "status": true,
+		    "statusMessage": "",
+		    "accessToken": "3PogiUbtI7CDc9j3to1srKWctiqHVEpEyJGvk0BIIBAtfqNXfyrhRWBR877l"
+		}
+
+	
+--Assets Data (In Progress)
+
+Method: GET
+EndPoint:http://fueleye.com/api/assets_data/20170314173800/2017014117800
+					   {from datetime} {to datetime}
+
+Parameter:
+	 HEADERS:
+		access_token='3PogiUbtI7CDc9j3to1srKWctiqHVEpEyJGvk0BIIBAtfqNXfyrhRWBR877l'
+ 						
+
+
+		 
+
+
+
+

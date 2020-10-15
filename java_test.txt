@@ -1,0 +1,301 @@
+
+-Servlet 
+--Servlet is a technology which is used to create a web application.
+--Web controller managed by java classes.
+--Need to design a java class which inherit one of the HttpServlet/GenericServlet
+--Register a servlet Class
+---XML Based
+---Annotation Based(@WebServlet)
+
+web.xml
+
+<servlet>
+   <servlet-name>HelloWorld</servlet-name>
+   <servlet-class>HelloWorld</servlet-class>
+</servlet>
+
+<servlet-mapping>
+   <servlet-name>HelloWorld</servlet-name>
+   <url-pattern>/HelloWorld</url-pattern>
+</servlet-mapping>
+
+
+public class HelloWorld extends HttpServlet {
+ 
+	public void doGet(HttpServletRequest request, HttpServletResponse response){
+		
+		PrintWriter out=response.getWriter();
+		out.println("Hello World");
+	}
+}
+
+
+
+
+Spring FrameWork
+
+--Popular framework for building java application
+--simpler and lightweight J2EE
+--Inversion of control(IoC),Dependency Injection(DI)
+--Inversion of control responsible to instanitate,configurable and assemble the object
+--Two types of ioc container BeanFactory and ApplicationContext
+--Dependecy Injection (Setter Based, Constructor Based)
+--Bean is object managed by ioc.
+	
+
+
+Spring Core Application
+
+Service Package
+EmailService{
+	public String SendMessage(String to, String message){
+		return "Email Send to " + to + "["+ message +"]";
+	}	
+}
+
+
+Client Package
+MyApp{
+	public static void main(string args[]){
+		EmailService service=new EmailService();
+		service.sendMessage("Someone","Something");
+	}
+}
+
+
+
+
+
+
+
+
+SpringPro Application
+
+XML
+ApplicationContext.xml
+
+<beans>
+	<bean id="msgService" class="com.cgt.spring.services.EmailService" />
+</beans>
+
+
+public class MyApp {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		// EmailService service  = new EmailService();
+		
+		// getting the ref of bean factory
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+		
+		// get the instance of service bean
+		IMessageService service = context.getBean("msgService", IMessageService.class);
+		String ack = service.sendMessage("Someone", "Something...");
+		// System.out.println(ack);
+	}
+
+}
+
+
+Annotation Based Configuration
+
+
+
+<beans>
+	<context:component-scan  base-package="com.cgt.spring"/>
+	<context:property-placeholder location="classpath:messages.properties"/>
+</beans>
+
+@Component
+@Scope("prototype")
+public class EmailService implements IMessageService {
+
+}
+
+
+
+Purely java based configuration
+SpringBase-JavaConfig
+config/MyConfig.java
+
+
+@Configuration
+@ComponentScan("com.cgt.spring")
+@PropertySource("classpath:messages.properties")
+public class MyConfig {
+
+	/*@Bean
+	public IMessageService msgService(IFortuneService service) {
+		// put logic 
+		return new SmsService(service);
+	}*/
+	
+	@Bean
+	public IMessageService msgService() {
+		// put logic 
+		return new SmsService();
+	}
+	
+	
+}
+
+public class MyApp {
+
+	public static void main(String[] args) {
+		
+		// creating and getting the ref of bean container
+		// ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+		
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MyConfig.class);
+		
+		
+		// get the instance of service bean
+		IMessageService service = context.getBean("msgService", IMessageService.class);
+		String ack = service.sendMessage("Someone@mail.com", "Something...");
+		System.out.println(ack);
+		
+		
+		context.close();
+		
+	}
+
+}
+
+
+
+
+
+
+Spring MVC Framework
+
+
+XML Based Configuration
+
+WEB-INF/web.xml
+  <servlet>
+  	<servlet-name>dispatcher</servlet-name>
+  	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	<load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  
+  <servlet-mapping>
+  	<servlet-name>dispatcher</servlet-name>
+  	<url-pattern>/</url-pattern>
+  </servlet-mapping>
+
+WEB/-INF/dispatcher-servlet.xml
+
+  <beans>
+	<context:component-scan  base-package="com.cgt.spring.mvc"/>
+	
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/"/>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+  <beans>
+
+
+@Controller
+@RequestMapping("/student")
+public class StudentController {
+
+
+	@RequestMapping("/request-data")
+	public String requestData(@RequestParam("test") String type) {
+		System.out.println("Data : " + type);
+		return "student-request-data";
+	}
+
+	
+	@RequestMapping("/request-data-pro/{type}")
+	public String requestDataPro(@PathVariable("type") String test) {
+		System.out.println("Path Variable : " + test);
+		return "student-request-data";
+	}
+
+
+	@RequestMapping("/save-data")
+	public String saveData(@Valid @ModelAttribute("student") Student student, BindingResult result) {
+		System.out.println(result.hasErrors());
+		model.addAttribute("student", student);
+		if(result.hasErrors()) {
+			return "student-entry";
+		}
+		return "student-show";
+	}
+}
+
+
+
+
+
+
+
+JAVA Based Configuration
+
+DispactcherServlet.java
+
+
+
+
+
+
+
+
+
+Spring Configuration
+
+
+Front Controller
+-DispatcherServlet.java
+public class MyDispatcherServlet extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+	@Override
+	protected Class<?>[] getRootConfigClasses() { //  return an array of classes designed to config bean factory
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Class<?>[] getServletConfigClasses() {
+		// TODO Auto-generated method stub
+		return new Class[] {MyDispatcherServletConfig.class};
+	}
+
+	@Override
+	protected String[] getServletMappings() {
+		// TODO Auto-generated method stub
+		return new String[] {"/"};
+	}
+
+}
+
+
+-DispatcherServletConfig.java (Intenal View Resolver)
+@Configuration
+@EnableWebMvc
+@ComponentScan("com.cgt.spring.mvc")
+public class MyDispatcherServletConfig {
+
+	@Bean
+	public InternalResourceViewResolver viewResolver() {
+		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+		viewResolver.setPrefix("/WEB-INF/views/");
+		viewResolver.setSuffix(".jsp");
+		
+		return viewResolver;
+	}
+		
+}
+
+
+1)XML
+2)Annotation
+3)JAVA(XML replaced by java class)
+
+
+Facade is a structural design pattern that provide the interface to complex java classes
+
+
+
