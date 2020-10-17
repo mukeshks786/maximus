@@ -15,7 +15,7 @@ use yii\helpers\ArrayHelper;
  * The [[EnumColumn]] allows you to configure and display a dynamic content / markup for each of the cell attribute
  * values based on enumerated `$value => $content` pairs. An example of the usage:
  *
- * ```php
+ * ```php/hello 
  * // Example 1
  * [
  *      'class' => 'kartik\grid\EnumColumn',

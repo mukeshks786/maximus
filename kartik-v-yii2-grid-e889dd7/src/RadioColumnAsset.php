@@ -1,4 +1,6 @@
 <?php
+<?php
+<?php
 
 /**
  * @package   yii2-grid
